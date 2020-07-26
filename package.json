@@ -4,7 +4,13 @@
   "bin": {
     "dnstrack": "bin/dnstrack.js"
   },
+  "files": [
+    "lib"
+  ],
+  "main": "./lib/dnstrack-stack.js",
+  "type": "./lib/dnstrack-stack.d.ts",
   "scripts": {
+    "prepare": "tsc",
     "build": "tsc",
     "watch": "tsc -w",
     "test": "jest",
