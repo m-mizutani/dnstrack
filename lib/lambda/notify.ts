@@ -1,6 +1,12 @@
 import logger from "./logger";
 import * as events from "aws-lambda";
-import { ChatPostMessageArguments, MrkdwnElement } from "@slack/web-api";
+import {
+  ChatPostMessageArguments,
+  MrkdwnElement,
+  Block,
+  SectionBlock,
+  DividerBlock,
+} from "@slack/web-api";
 import axios from "axios";
 const strftime = require("strftime");
 
@@ -68,14 +74,44 @@ function buildSlackMessage(report: notifyReport): ChatPostMessageArguments {
     throw new Error("Invalid event name: " + report.eventName);
   }
 
-  const fields: MrkdwnElement[] = [
-    toField("Domain Name", report.domainName),
-    toField("Record Type", report.recType),
-    toField("Timestamp", strftime("%F %T%z", report.timestamp)),
-    toField("New records", report.newData.join("\n")),
+  let blocks: Block[] = [
+    {
+      type: "section",
+      text: { type: "mrkdwn", text: param.title },
+    } as SectionBlock,
+    {
+      type: "section",
+      fields: [
+        toField("Domain Name", report.domainName),
+        toField("Record Type", report.recType),
+        toField("Timestamp", strftime("%F %T%z", report.timestamp)),
+      ],
+    } as SectionBlock,
+    {
+      type: "divider",
+    } as DividerBlock,
+    {
+      type: "section",
+      text: {
+        type: "mrkdwn",
+        text: "*New Records*\n" + report.newData.join("\n"),
+      },
+    } as SectionBlock,
   ];
-  if (report.oldData) {
-    fields.push(toField("Old records", report.oldData.join("\n")));
+
+  if (report.oldData.length > 0) {
+    blocks = blocks.concat([
+      {
+        type: "divider",
+      } as DividerBlock,
+      {
+        type: "section",
+        text: {
+          type: "mrkdwn",
+          text: "*Old Records*\n" + report.oldData.join("\n"),
+        },
+      } as SectionBlock,
+    ]);
   }
 
   const msg: ChatPostMessageArguments = {
@@ -84,13 +120,7 @@ function buildSlackMessage(report: notifyReport): ChatPostMessageArguments {
     attachments: [
       {
         color: param.color,
-        blocks: [
-          {
-            type: "section",
-            text: { type: "mrkdwn", text: param.title },
-          },
-          { type: "section", fields: fields },
-        ],
+        blocks: blocks,
       },
     ],
   };
@@ -132,11 +162,10 @@ function filterRecord(record: events.DynamoDBRecord): notifyReport | null {
   report.oldData = record.dynamodb.OldImage["data"].SS!;
   report.oldData.sort();
   report.newData.sort();
-  if (report.oldData.length === report.newData.length) {
-    return null;
-  }
-
-  if (report.oldData.every((v, i) => v === report.newData[i])) {
+  if (
+    report.oldData.length === report.newData.length &&
+    report.oldData.every((v, i) => v === report.newData[i])
+  ) {
     return null;
   }
 
