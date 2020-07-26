@@ -21,7 +21,34 @@
     "typescript": "~3.7.2"
   },
   "dependencies": {
+    "@aws-cdk/aws-dynamodb": "^1.51.0",
+    "@aws-cdk/aws-events": "^1.51.0",
+    "@aws-cdk/aws-events-targets": "^1.51.0",
+    "@aws-cdk/aws-lambda": "^1.51.0",
+    "@aws-cdk/aws-lambda-event-sources": "^1.51.0",
+    "@aws-cdk/aws-lambda-nodejs": "^1.51.0",
     "@aws-cdk/core": "1.51.0",
-    "source-map-support": "^0.5.16"
+    "@dazn/lambda-powertools-logger": "^1.24.1",
+    "@slack/web-api": "^5.11.0",
+    "@types/aws-lambda": "^8.10.59",
+    "@types/strftime": "^0.9.2",
+    "axios": "^0.19.2",
+    "dynamoose": "^2.2.1",
+    "source-map-support": "^0.5.16",
+    "strftime": "^0.10.0"
+  },
+  "cdk-lambda": "/asset-output/index.js",
+  "targets": {
+    "cdk-lambda": {
+      "context": "node",
+      "includeNodeModules": {
+        "aws-sdk": false
+      },
+      "sourceMap": false,
+      "minify": false,
+      "engines": {
+        "node": ">= 12"
+      }
+    }
   }
 }
