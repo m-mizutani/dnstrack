@@ -39,10 +39,12 @@ export async function handler(args: arguments) {
   );
 
   const dnsResults = await Promise.all(procs);
-  logger.info("dns lookup results", dnsResults);
+  logger.info("dns lookup results", { result: dnsResults });
 
   const repoResult = await args.repo.putRecord(dnsResults);
-  logger.info("db put results", repoResult);
+  logger.info("db put results", { result: repoResult });
+
+  return "ok";
 }
 
 function nowUTC(): Date {

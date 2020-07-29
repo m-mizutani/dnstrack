@@ -13,7 +13,8 @@
     "prepare": "tsc",
     "build": "tsc",
     "watch": "tsc -w",
-    "test": "jest",
+    "test": "tsc; jest",
+    "lambda-test": "tsc; jest test/query.test.ts",
     "cdk": "cdk"
   },
   "devDependencies": {
