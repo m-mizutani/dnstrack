@@ -39,7 +39,7 @@
     "@slack/web-api": "^5.11.0",
     "@types/aws-lambda": "^8.10.59",
     "@types/strftime": "^0.9.2",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "dynamoose": "^2.2.1",
     "source-map-support": "^0.5.16",
     "strftime": "^0.10.0"
